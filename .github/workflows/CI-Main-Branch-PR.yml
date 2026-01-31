@@ -29,9 +29,9 @@ jobs:
 
       # 5️⃣ Run lint
       - name: Run GolangCI-Lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.53.3
+          version: latest
           args: ./...
 
       # 6️⃣ Optional: Start server and smoke test endpoints
