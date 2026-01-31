@@ -28,13 +28,12 @@ jobs:
         run: go test ./src/... -v
 
 
-        
       - name: Run GolangCI-Lint
         uses: golangci/golangci-lint-action@v6
         with:
-          # 'latest' works best with goinstall to ensure it's built with your Go 1.25
-          version: latest
-          install-mode: goinstall
+          # Use v2 to support Go 1.25+ features
+          version: v2
+          args: ./...
 
 
       # 6️⃣ Optional: Start server and smoke test endpoints
