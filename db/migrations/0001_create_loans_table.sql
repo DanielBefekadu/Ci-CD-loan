@@ -1,0 +1,8 @@
+CREATE TABLE loans (
+    id SERIAL PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    principal NUMERIC NOT NULL,
+    rate NUMERIC NOT NULL,
+    term INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
