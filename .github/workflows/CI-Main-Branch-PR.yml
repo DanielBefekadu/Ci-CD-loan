@@ -1,0 +1,44 @@
+name: CI for Main Branch PR
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2️⃣ Set up Go
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+
+      # 3️⃣ Install dependencies
+      - name: Install dependencies
+        run: go mod tidy
+
+      # 4️⃣ Run unit tests
+      - name: Run Unit Tests
+        run: go test ./src/... -v
+
+      # 5️⃣ Run lint
+      - name: Run GolangCI-Lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: v1.53.3
+          args: ./...
+
+      # 6️⃣ Optional: Start server and smoke test endpoints
+      - name: Build and start server
+        run: |
+          go build ./src/main.go
+          ./main &
+          sleep 3 # wait for server to start
+          curl -f "http://localhost:8080/repayment-schedule?principal=1200&rate=5&term=12"
+          curl -f "http://localhost:8080/total-interest?principal=1200&rate=12&term=12"
