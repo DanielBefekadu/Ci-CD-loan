@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/DanielBefekadu/Ci-CD-loan/services"
+	"Ci-CD-loan/services"
 )
 
 func RepaymentScheduleHandler(w http.ResponseWriter, r *http.Request) {
