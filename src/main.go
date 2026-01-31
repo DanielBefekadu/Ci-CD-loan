@@ -11,6 +11,7 @@ import (
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/repayment-schedule", handlers.RepaymentScheduleHandler).Methods("GET")
+	r.HandleFunc("/total-interest", handlers.TotalInterestHandler).Methods("GET")
 
 	log.Println("Server started at :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
