@@ -1,4 +1,4 @@
-module Ci-CD-loan
+module github.com/DanielBefekadu/Ci-CD-loan
 
 go 1.25.4
 
