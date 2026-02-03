@@ -22,7 +22,6 @@ jobs:
       - name: Install dependencies
         run: |
           export GOPROXY=direct
-          export GOSUMDB=off
           go mod tidy
 
       # 4️⃣ Run unit tests
