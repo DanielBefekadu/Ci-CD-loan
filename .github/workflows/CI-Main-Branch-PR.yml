@@ -15,7 +15,7 @@ jobs:
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      IMAGE_NAME: myusername/my-go-app  # Replace with your Docker Hub repo
+      IMAGE_NAME: fjidani/loan-test  # Replace with your Docker Hub repo
 
     steps:
       # Step 1: Checkout code
