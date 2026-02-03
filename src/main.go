@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/DanielBefekadu/Ci-CD-loan/src/handlers"
+	"Ci-CD-loan/src/handlers"
 	"github.com/gorilla/mux"
 )
 
