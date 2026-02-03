@@ -49,7 +49,7 @@ jobs:
 
       # Step 6: Build binary
       - name: Build Go binary
-        run: go build -o app ./...
+        run: go build -o app ./src
 
       # Step 7: Build Docker image
       - name: Build Docker image
