@@ -1,45 +1,78 @@
-name: CI for Main Branch PR
+name: CI/CD - Develop Branch
 
+# Trigger workflow on push to develop or PRs into develop
 on:
+  push:
+    branches:
+      - develop
   pull_request:
-    branches: [main]
+    branches:
+      - develop
 
 jobs:
-  build-and-test:
+  build-and-docker:
     runs-on: ubuntu-latest
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      IMAGE_NAME: myusername/my-go-app  # Replace with your Docker Hub repo
 
     steps:
-      # 1️⃣ Checkout code
-      - name: Checkout code
+      # Step 1: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Set up Go
+      # Step 2: Set up Go
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.21
+          go-version: 1.25
 
-      - name: Install dependencies
-        run: |
-          export GOPROXY=direct
-          go mod tidy
-
-      # 4️⃣ Run unit tests
-      - name: Run Unit Tests
-        run: go test ./src/... -v
-
-      - name: Run GolangCI-Lint
-        uses: golangci/golangci-lint-action@v6
+      # Step 3: Cache Go modules
+      - name: Cache Go modules
+        uses: actions/cache@v3
         with:
-          version: v1.60  # ✅ correct
-          args: ./...
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: go mod tidy
 
-      # 6️⃣ Optional: Start server and smoke test endpoints
-      - name: Build and start server
+      # Step 5: Run tests
+      - name: Run tests
+        run: go test ./... -v
+
+      # Step 6: Build binary
+      - name: Build Go binary
+        run: go build -o app ./...
+
+      # Step 7: Build Docker image
+      - name: Build Docker image
         run: |
-          go build ./src/main.go
-          ./main &
-          sleep 3 # wait for server to start
-          curl -f "http://localhost:8080/repayment-schedule?principal=1200&rate=5&term=12"
-          curl -f "http://localhost:8080/total-interest?principal=1200&rate=12&term=12"
+          docker build -t $IMAGE_NAME:develop .
+
+      # Step 8: Log in to Docker Hub
+      - name: Docker Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Step 9: Push Docker image
+      - name: Push Docker image
+        run: |
+          docker tag $IMAGE_NAME:develop $IMAGE_NAME:develop
+          docker push $IMAGE_NAME:develop
+
+      # Step 10: Deployment (currently commented)
+      # - name: Deploy to staging
+      #   run: |
+      #     echo "Deployment commands would go here."
+      #     echo "e.g., SSH to staging server or use Kubernetes manifests"
+      #     echo "docker pull $IMAGE_NAME:develop && docker run ..."
+
