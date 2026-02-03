@@ -21,7 +21,10 @@ jobs:
 
       # 3️⃣ Install dependencies
       - name: Install dependencies
-        run: go mod tidy
+        run: |
+          for i in 1 2 3; do
+            go mod tidy && break || sleep 5
+          done
 
       # 4️⃣ Run unit tests
       - name: Run Unit Tests
