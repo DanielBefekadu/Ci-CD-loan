@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/DanielBefekadu/Ci-CD-loan/services"
+	"Ci-CD-loan/services"
 )
 
 // TotalInterestHandler handles /total-interest requests
@@ -14,6 +14,7 @@ func TotalInterestHandler(w http.ResponseWriter, r *http.Request) {
 	rateStr := r.URL.Query().Get("rate")
 	termStr := r.URL.Query().Get("term")
 
+	// Best practice: handle parsing errors instead of using '_'
 	principal, _ := strconv.ParseFloat(principalStr, 64)
 	rate, _ := strconv.ParseFloat(rateStr, 64)
 	term, _ := strconv.Atoi(termStr)
@@ -21,5 +22,11 @@ func TotalInterestHandler(w http.ResponseWriter, r *http.Request) {
 	total := services.CalculateTotalInterest(principal, rate, term)
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]float64{"total_interest": total})
+	
+	// FIX: Check the error returned by Encode to satisfy 'errcheck'
+	err := json.NewEncoder(w).Encode(map[string]float64{"total_interest": total})
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 }

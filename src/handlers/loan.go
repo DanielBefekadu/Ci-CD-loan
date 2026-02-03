@@ -20,5 +20,10 @@ func RepaymentScheduleHandler(w http.ResponseWriter, r *http.Request) {
 	schedule := services.CalculateRepayment(principal, rate, term)
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(schedule)
+	
+	// FIX: Capture and handle the error to satisfy errcheck
+	if err := json.NewEncoder(w).Encode(schedule); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return
+	}
 }
